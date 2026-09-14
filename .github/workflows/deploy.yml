@@ -1,0 +1,25 @@
+name: Deploy to server
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+# deploy.sh skips (not queues) when another run holds its lock, so serialise here
+concurrency: deploy
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Run deploy.sh on the server
+        env:
+          KEY:  ${{ secrets.CPANEL_SSH_KEY }}
+          HOST: ${{ secrets.CPANEL_HOST }}
+          USR:  ${{ secrets.CPANEL_USER }}
+          PORT: ${{ secrets.CPANEL_PORT || 22 }}
+        run: |
+          mkdir -p ~/.ssh
+          printf '%s\n' "$KEY" > ~/.ssh/id && chmod 600 ~/.ssh/id
+          ssh -i ~/.ssh/id -p "$PORT" -o StrictHostKeyChecking=accept-new \
+              "$USR@$HOST" '~/repos/alaidi.net/deploy.sh --force'

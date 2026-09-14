@@ -58,6 +58,7 @@ log "deploying ${before%"${before#???????}"} -> ${after%"${after#???????}"}"
 rsync -a --delete \
       --exclude '.git/' \
       --exclude '.gitignore' \
+      --exclude '.github/' \
       --exclude 'deploy.sh' \
       --exclude '.deploy.lock' \
       --exclude '.well-known/' \
