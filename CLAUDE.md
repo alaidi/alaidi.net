@@ -1,0 +1,99 @@
+# alaidi.net
+
+Static site for Abdul Hadi M. Alaidi's course pages (Wasit University). Converted
+from WordPress in September 2026.
+
+**No build step, no framework, no dependencies.** Edit the HTML and CSS directly.
+There is nothing to compile, install, or run. To preview:
+
+```bash
+python3 -m http.server 8899
+```
+
+## Layout
+
+```
+index.html              course listing, grouped by semester
+<term>/<course>/        11 course pages (e.g. fall-2024/computer-network/)
+about-me/               bio, publications, career timeline
+privacy-policy/
+style.css               the only stylesheet
+.htaccess               DirectoryIndex, legacy redirects, cache headers
+img/                    12 images (course cards, logo, portrait)
+download/               106 lecture files, 295 MB
+```
+
+14 HTML files total. Each is standalone and complete — header, nav, footer and
+theme script are duplicated into every page rather than shared. That is
+deliberate: it keeps the site dependency-free and means a page can never render
+half-styled. When you change the header, footer, or theme script, **change it in
+all 14 files.**
+
+## Rules that matter
+
+**Never rename a directory.** Every path matches the old WordPress URL exactly,
+so inbound links and search results keep working. `fall-2024/computer-network/`
+is not a naming choice — it is the live URL. Same for `2019-2/`, which looks like
+a typo and is not.
+
+**Term slugs appear in three places and must agree.** There are no term pages —
+`/fall-2025/` never had content. Instead each `<section class="term">` on
+`index.html` carries `id="<term-slug>"`, breadcrumbs link to `../../#<term-slug>`,
+and `.htaccess` redirects `/fall-2025/` to `/#fall-2025`. Rename a term directory
+and all three break silently: the link still works, it just lands at the top of
+the page instead of the right section. `.term { scroll-margin-top: 80px }` is what
+keeps the heading clear of the sticky header when you land there — not decoration.
+
+**`download/` has two shapes, both load-bearing.**
+`download/2016-2017/...` and `download/2017-2018/...` (27 files) sit at their
+original WordPress paths and are linked from elsewhere on the web — leave them
+where they are. `download/files/` (79 files) holds everything that used to be
+served by the Download Manager plugin through `?wpdmdl=` query URLs; those were
+flattened to `<plugin-slug>-<original-filename>`.
+
+**The theme has three states, not two.** Light is defined on bare `:root`. Dark
+is defined *twice*: under `@media (prefers-color-scheme: dark)` scoped to
+`:root:not([data-theme="light"])`, and again under `:root[data-theme="dark"]`.
+Adding a color means editing all three blocks. Dropping the `:not(...)` guard
+looks harmless and silently breaks the case where the OS is dark but the visitor
+clicked light.
+
+The `<head>` script that reads `localStorage` must stay inline and must stay in
+the head — it sets `data-theme` before first paint, which is the only thing
+preventing a white flash on load. Every `localStorage` access is wrapped in
+`try/catch`; private windows throw, and an uncaught throw there leaves the whole
+page unstyled.
+
+**Cards/table on the home page is pure CSS over one set of markup.** The switch
+does not rebuild anything — it sets `data-view` on `<html>`, and
+`:root[data-view="table"] .card { … }` re-lays the same `<article class="card">`
+elements as rows. There is no second copy of the course list, and no `<table>`
+element; keep it that way, or the two views will drift apart. The switch markup
+and its handler live only in `index.html` — the other 13 pages have no grid.
+
+**Syllabus tables are the point of this site.** Every `<table>` lives inside
+`<div class="table-scroll">` so it scrolls sideways on a phone instead of
+blowing out the page width. Keep that wrapper.
+
+## Known issues, inherited from WordPress
+
+Two downloads were already dead on the live site before the conversion and are
+rendered as struck-through text (`class="dead"`):
+
+- **Company SQL** (`2019-2/database/`) — the plugin refuses `.sql` uploads
+- **سعيات مادة الامنية** (`2019-2/computer-security/`) — 404 on the server
+
+The Database page also shows a literal `[download][Book]` — a broken shortcode
+that never rendered in WordPress either. All three are content problems, not
+conversion bugs; fixing them means re-uploading the files.
+
+## Deploying
+
+Drop everything into the LiteSpeed docroot, then remove `wp-admin/`,
+`wp-includes/`, `wp-content/`, `wp-*.php`, and `xmlrpc.php`. Keep `download/` —
+the legacy paths already live there.
+
+**This repo is not under git**, and the scripts that generated it from the
+WordPress REST API are gone. Once WordPress is removed the site cannot be
+regenerated: these files become the only source of truth. Back up before
+large edits.

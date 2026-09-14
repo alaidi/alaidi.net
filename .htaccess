@@ -1,0 +1,16 @@
+DirectoryIndex index.html
+
+# Old WordPress pages that had no content of their own. The semester groupings
+# land on their own section of the home page; the unfinished drafts go to the top.
+# Everything else keeps its original URL.
+RedirectMatch 301 ^/(spring-2026|fall-2025|spring-2025|fall-2024|2019-2)/?$ /#$1
+RedirectMatch 301 ^/(profile|students|research-projects|publication|abut-me)/?$ /
+
+<IfModule mod_expires.c>
+  ExpiresActive On
+  ExpiresByType text/css            "access plus 7 days"
+  ExpiresByType image/jpeg          "access plus 30 days"
+  ExpiresByType image/png           "access plus 30 days"
+  ExpiresByType image/webp          "access plus 30 days"
+  ExpiresByType application/pdf     "access plus 30 days"
+</IfModule>
