@@ -13,7 +13,7 @@ python3 -m http.server 8899
 ## Layout
 
 ```
-index.html              course listing, grouped by semester
+index.html              course listing, newest term first
 <term>/<course>/        12 course pages (e.g. fall-2024/computer-network/)
 about-me/               bio, publications, career timeline
 privacy-policy/
@@ -98,8 +98,10 @@ in all 16 pages, or returning visitors will not see the change.
 **A course with no materials yet shows a blank ruled sheet, not a photo.**
 `<figure class="blank">` draws it in CSS — repeating rules plus a margin line, the
 binder metaphor. It keeps the card the same height as one with an image, and says
-"nothing filed here yet" without faking content. Courses added after the migration
-(Soft Computing) are declared in `EXTRA_COURSES`, not read from the WordPress export.
+"nothing filed here yet" without faking content. Courses added after the migration (Soft Computing) are declared in
+`EXTRA_COURSES`, not read from the WordPress export. A term named there that
+`home.json` does not know (Fall 2026) gets its own section, ahead of the imported
+terms — so each new semester leads the course list.
 
 **Cards/table on the home page is pure CSS over one set of markup.** The switch
 does not rebuild anything — it sets `data-view` on `<html>`, and

@@ -6,8 +6,11 @@ ErrorDocument 404 /404.html
 RedirectMatch 301 ^/2019-2/(.+)$ /2019/$1
 RedirectMatch 301 ^/2019-2/?$ /#2019
 
+# Soft Computing was briefly filed under Spring 2026 before it moved to Fall 2026.
+RedirectMatch 301 ^/spring-2026/soft-computing/?$ /fall-2026/soft-computing/
+
 # Terms had no page of their own: send each to its section of the course list.
-RedirectMatch 301 ^/(spring-2026|fall-2025|spring-2025|fall-2024|2019)/?$ /#$1
+RedirectMatch 301 ^/(fall-2026|spring-2026|fall-2025|spring-2025|fall-2024|2019)/?$ /#$1
 
 # Unfinished WordPress drafts, deleted in the rebuild.
 RedirectMatch 301 ^/(profile|students|research-projects|publication|abut-me)/?$ /
