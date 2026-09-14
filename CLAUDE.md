@@ -64,6 +64,23 @@ preventing a white flash on load. Every `localStorage` access is wrapped in
 `try/catch`; private windows throw, and an uncaught throw there leaves the whole
 page unstyled.
 
+**The design is "a lecturer's course binder."** Warm paper (`--paper`), ink, oxblood
+rules (`--accent`), and an amber tab (`--mark`) on anything you can take away. Amber
+is the download affordance and nothing else — spending it on a heading or a button
+dilutes the one signal a student is scanning for. `--on-mark` is a fixed dark ink in
+*both* themes, because amber stays amber; flipping it to `--ink` in dark mode drops
+that text to 1.83:1.
+
+Type is Source Serif 4 (display, course titles, citations) over IBM Plex Sans
+(everything else). Plex is there for its tabular figures — the syllabus week and
+date columns depend on `font-variant-numeric: tabular-nums`. Both load from Google
+Fonts via `@import`; there is no build step to self-host them.
+
+**Course cards show a real file count, computed at build time.** `file_count()`
+counts distinct `class="dl"` hrefs on each cleaned page. Note it must match both
+attribute orderings — widget-derived links emit `class` before `href`, inline ones
+after — or courses silently report zero. Never hand-write these numbers.
+
 **Cards/table on the home page is pure CSS over one set of markup.** The switch
 does not rebuild anything — it sets `data-view` on `<html>`, and
 `:root[data-view="table"] .card { … }` re-lays the same `<article class="card">`
@@ -93,7 +110,15 @@ Drop everything into the LiteSpeed docroot, then remove `wp-admin/`,
 `wp-includes/`, `wp-content/`, `wp-*.php`, and `xmlrpc.php`. Keep `download/` —
 the legacy paths already live there.
 
-**This repo is not under git**, and the scripts that generated it from the
-WordPress REST API are gone. Once WordPress is removed the site cannot be
-regenerated: these files become the only source of truth. Back up before
-large edits.
+The scripts that generated this site from the WordPress REST API are gone. Once
+WordPress is removed the site cannot be regenerated: these files become the only
+source of truth. Back up before large edits.
+
+**One lecture file is deliberately not in git, and the site links to it.**
+`download/files/introduction-to-computer-vision-Lecture_01_Introduction.pptx` is
+116 MB — past GitHub's hard 100 MB limit — so `.gitignore` excludes it. It is
+still on disk, still linked from `fall-2024/computer-vision/`, and still in
+`search.json`. **A deploy that copies only what git tracks will ship that course
+with one dead download.** Upload it out of band, or move it off the repo and
+point the link at wherever it lands. The other 105 files (178 MB) are tracked
+normally.
