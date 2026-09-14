@@ -84,6 +84,16 @@ Fonts via a `<link>` in each page's `<head>` — never an `@import`, which would
 serialise HTML → CSS → font CSS → font files and block first paint. There is no
 build step to self-host them.
 
+**A third face exists, and it may only ever set the word "alaidi".** The header
+wordmark is Young Serif (`--display`), chosen for its single-storey `a`, which
+lands twice in the name. It loads from a *second* `<link>` carrying `&text=alaidi`
+— Google then returns a 1.2 KB font covering only `a`, `d`, `i`, `l`. That is why
+it cannot ride along on the body-font link: `text=` subsets every family in the
+request, so putting it there would gut Source Serif and Plex. The narrow
+`unicode-range` is also the safety net — point `--display` at other copy and
+everything outside those four letters silently falls back. Young Serif ships one
+weight, 400; asking for 600 gets a synthesised bold.
+
 **Course cards show a real file count, computed at build time.** `file_count()`
 counts distinct `class="dl"` hrefs on each cleaned page. Note it must match both
 attribute orderings — widget-derived links emit `class` before `href`, inline ones

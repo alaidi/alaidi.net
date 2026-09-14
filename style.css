@@ -22,6 +22,12 @@
 
   --serif: "Source Serif 4", Iowan Old Style, Palatino, Georgia, serif;
   --sans:  "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", Tahoma, sans-serif;
+  /* Wordmark only, and the reason is the single-storey "a" -- it lands twice in
+     "alaidi", which is what makes the mark read as a mark instead of a serif
+     font. Google subsets it to those letters: 1.2 KB, unicode-range a,d,i,l, so
+     it can never bleed onto other text. One weight only, 400 -- asking for 600
+     here would get a synthesised bold. Source Serif is the swap fallback. */
+  --display: "Young Serif", "Source Serif 4", Iowan Old Style, Palatino, Georgia, serif;
   --step:  .25rem;
   --ease:  cubic-bezier(.2, .7, .3, 1);
 
@@ -114,13 +120,32 @@ img { max-width: 100%; height: auto; }
   min-height: 4rem;
 }
 .brand {
-  display: inline-flex; align-items: center; gap: .625rem;
+  display: inline-flex; align-items: center; gap: .5625rem;
   color: var(--ink);
-  font-family: var(--serif);
-  font-size: 1.3rem; font-weight: 600; letter-spacing: -.015em;
+  font-family: var(--display);
+  font-size: 1.375rem; font-weight: 400; letter-spacing: -.01em;
 }
-.brand:hover { text-decoration: none; color: var(--accent); }
+.brand:hover,
+.brand:focus-visible { text-decoration: none; color: var(--accent); }
 .brand img { width: 1.75rem; height: 1.75rem; border-radius: 5px; }
+
+/* The nav marks the current page with a rule under it; the wordmark answers with
+   the same device on hover, so the header speaks one marking language, not two.
+   line-height:1 is load-bearing: it collapses the inherited leading so the box
+   bottom lands on the font's own descent (~4px) instead of half a line below it,
+   which is what lets the rule key off the baseline rather than a magic number.
+   "alaidi" has no descender, so it can sit that tight. The reduced-motion block
+   further down already collapses the wipe to a plain appearance. */
+.brand-name { position: relative; line-height: 1; }
+.brand-name::after {
+  content: "";
+  position: absolute; left: 0; right: 0; bottom: -.125rem;
+  height: 2px; background: var(--accent);
+  transform: scaleX(0); transform-origin: left;
+  transition: transform .32s var(--ease);
+}
+.brand:hover .brand-name::after,
+.brand:focus-visible .brand-name::after { transform: scaleX(1); }
 
 .site-nav { margin-left: auto; display: flex; align-items: center; gap: .125rem; }
 .site-nav a {
