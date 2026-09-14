@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" width="800" height="500" role="img">
+  <!-- Soft computing: fuzzy membership functions sketched on a ruled binder sheet. -->
+  <rect width="800" height="500" fill="#f7eae5"/>
+  <g stroke="#e0d9cc" stroke-width="1">
+    <path d="M0 60.5h800M0 100.5h800M0 140.5h800M0 180.5h800M0 220.5h800M0 260.5h800M0 300.5h800M0 340.5h800M0 380.5h800M0 420.5h800M0 460.5h800"/>
+  </g>
+  <path d="M64.5 0V500" stroke="#9c3524" stroke-opacity=".3"/>
+
+  <!-- overlapping fuzzy sets: low (trapezoid), medium (triangle), high (trapezoid) -->
+  <path d="M230 400 350 160 470 400Z" fill="#e8a317" fill-opacity=".3"/>
+  <g fill="none" stroke="#9c3524" stroke-width="3.5" stroke-linejoin="round" stroke-linecap="round">
+    <path d="M110 400V160h110l110 240" stroke-opacity=".5"/>
+    <path d="M230 400 350 160 470 400"/>
+    <path d="M370 400 480 160h110v240" stroke-opacity=".5"/>
+  </g>
+
+  <!-- universe of discourse -->
+  <path d="M96 400h608" stroke="#1c1917" stroke-width="2.5" stroke-linecap="round"/>
+  <g fill="#1c1917" fill-opacity=".45">
+    <circle cx="180" cy="400" r="5"/><circle cx="350" cy="400" r="5"/><circle cx="530" cy="400" r="5"/>
+  </g>
+  <circle cx="350" cy="160" r="10" fill="#e8a317" stroke="#1c1917" stroke-width="2.5"/>
+</svg>
