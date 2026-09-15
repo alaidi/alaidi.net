@@ -43,7 +43,7 @@
 <div id="results" class="results" role="region" aria-live="polite" hidden></div>
 <div id="browse">
 <section class="term" id="fall-2026"><h2>Fall 2026</h2><div class="grid">
-<article class="card"><a href="fall-2026/soft-computing/"><figure><img src="./img/soft-computing.svg" alt="" loading="lazy"></figure><div class="card-body"><h3>Soft Computing</h3><span class="count none">No files yet</span></div></a></article>
+<article class="card"><a href="fall-2026/soft-computing/"><figure><img src="./img/soft-computing.svg" alt="" loading="lazy"></figure><div class="card-body"><h3>Soft Computing</h3><span class="count"><b>1</b> file</span></div></a></article>
 </div></section>
 <section class="term" id="spring-2026"><h2>Spring 2026</h2><div class="grid">
 <article class="card"><a href="spring-2026/network-application/"><figure><img src="./img/network.jpg" alt="" loading="lazy"></figure><div class="card-body"><h3>Network Application</h3><span class="count"><b>14</b> files</span></div></a></article>
@@ -108,7 +108,7 @@ document.querySelectorAll(".view-switch button").forEach(function(b){
       if (c.t.toLowerCase().indexOf(q) > -1)
         rows.push('<a class="hit" href="' + c.p + '"><span class="hit-main">' +
                   mark(c.t, q) + '</span><span class="hit-sub">' + esc(c.s) +
-                  " &middot; " + c.f.length + " files</span></a>");
+                  " &middot; " + c.f.length + (c.f.length === 1 ? " file" : " files") + "</span></a>");
       c.f.forEach(function (f) {
         if (f.n.toLowerCase().indexOf(q) > -1)
           rows.push('<a class="hit" href="' + f.h + '"><span class="hit-main">' +
