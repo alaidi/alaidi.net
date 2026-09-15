@@ -12,6 +12,23 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
+      - name: Check the deploy secrets exist
+        env:
+          KEY:  ${{ secrets.CPANEL_SSH_KEY }}
+          HOST: ${{ secrets.CPANEL_HOST }}
+          USR:  ${{ secrets.CPANEL_USER }}
+        run: |
+          missing=
+          [ -n "$HOST" ] || missing="$missing CPANEL_HOST"
+          [ -n "$USR" ]  || missing="$missing CPANEL_USER"
+          [ -n "$KEY" ]  || missing="$missing CPANEL_SSH_KEY"
+          if [ -n "$missing" ]; then
+            echo "::error::Deploy is not configured. Missing repository secret(s):$missing"
+            echo "Add them under Settings -> Secrets and variables -> Actions."
+            echo "Until then the site on GitHub is up to date but the server is NOT."
+            exit 1
+          fi
+
       - name: Run deploy.sh on the server
         env:
           KEY:  ${{ secrets.CPANEL_SSH_KEY }}
