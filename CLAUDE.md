@@ -90,7 +90,7 @@ come from two render-blocking `<link>`s to fonts.googleapis.com, which Lighthous
 measured at ~1.5 s of delay before first render: the browser fetched the HTML,
 then Google's CSS, then the font files. The `@font-face` rules now sit at the top
 of `style.css`, which is already on the critical path, so the fonts are found the
-moment it parses and the page makes **no third-party requests at all**. Never
+moment it parses and the page makes **no third-party request for fonts**. Never
 reintroduce a `<link>` to a font CDN or an `@import` — both put the hop back.
 
 `fonts/` holds five files, not fifteen, because both families are variable: one
@@ -101,6 +101,14 @@ other UA gets woff/ttf), take the `latin` and `latin-ext` blocks, download the
 woff2 they point at, and declare the weight as a range rather than one block per
 step. The site has no Arabic webfont — Arabic text falls back to the system face
 on purpose.
+
+**One third-party script runs, and it is the only one.** Rybbit analytics
+(`analytics.iq-server.com`, our own server) sits in the `<head>` of all 16 pages,
+deferred. It sets no cookies but does keep a random `rybbit-visitor-id` in
+`localStorage`. It is the site's only outside request — adding a second one means
+`privacy-policy/` is wrong until you update it, because that page now describes
+exactly what is collected and how to opt out (`localStorage["disable-rybbit"]`).
+The policy is hand-written, not the WordPress boilerplate it replaced.
 
 **A third face exists, and it may only ever set the word "alaidi".** The header
 wordmark is Young Serif (`--display`), chosen for its single-storey `a`, which
