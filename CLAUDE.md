@@ -182,13 +182,26 @@ course needs a new card; pointing `og:image` at a course photo instead gives a
 badly cropped preview, which is what these replaced. Every page declares
 `twitter:card = summary_large_image` to match, plus `og:image:width/height`.
 
+The generator is gone with the rest of the WordPress scripts, so redrawing a
+card now means rebuilding the template. The metrics, measured off an existing
+card: paper `--paper`, 1px `--rule` lines on a 48px pitch with the first at
+y=47, a 2px `--accent` margin at x=104, content column from x=152, 48px logo at
+y=67 with the Young Serif wordmark 20px after it at 37px, `--serif` 700/84px
+title at y=234, a 96x5 `--accent` rule at y=352, `--sans` 28px `--muted`
+subtitle at y=386, and a `--sans` 600/23px footer at y=541 — then JPEG at
+quality 55, which is where the rest of the cards sit (~45 KB). `img/` is served
+`immutable`, so a redrawn card ships under a **new filename** and `og:image`
+moves with it; `about-me-2026-09.jpg` is the worked example.
+
 **Every course page carries `Course` JSON-LD.** Name, description and provider
 (Wasit University) are the three fields Google requires for a course rich result;
 `hasCourseInstance.courseMode` is `onsite`, which is the claim to revisit if a
 course ever runs online. The home page carries `WebSite` + `Person` + an
-`ItemList` of the 12 courses, and About me carries `ProfilePage`. There is no
-`sameAs` because no ORCID or Scholar profile is linked from the site — add one
-there rather than inventing it.
+`ItemList` of the 12 courses, and About me carries `ProfilePage`. Both `Person`
+nodes carry the same `sameAs` — ORCID, Google Scholar, Scopus — and those three
+are also linked in the body of About me, which is the condition for claiming
+them: `sameAs` states a profile is the same entity, so only ever list one the
+page actually links. Keep the two copies in step.
 
 **Course cards show a real file count, computed at build time.** `file_count()`
 counts distinct `class="dl"` hrefs on each cleaned page. Note it must match both

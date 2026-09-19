@@ -273,6 +273,35 @@ main { flex: 1; padding-block: clamp(2rem, 6vw, 3.5rem) 4rem; }
   content: ""; flex: 1; height: 1px; background: var(--rule);
 }
 
+/* Landing from a breadcrumb -- ../../#spring-2025, or the /spring-2025/ redirect
+   in .htaccess -- drops you mid-page with nothing saying which section you asked
+   for; scroll-margin-top gets the heading clear of the header but the page still
+   looks identical. :target inks that term's binder tab and lets it settle, which
+   is the whole effect. No JS, and it costs nothing on the other 15 pages.
+   --accent, never --mark: amber is the download affordance, and spending it on a
+   heading would dilute the one signal a student is scanning for. */
+.term:target > h2        { animation: term-landed 2.4s var(--ease) both; }
+.term:target > h2::after { animation: term-landed-rule 2.4s var(--ease) both; }
+
+@keyframes term-landed {
+  0%, 45% { color: var(--accent); }
+  100%    { color: var(--muted); }
+}
+@keyframes term-landed-rule {
+  0%, 45% { background: var(--accent); height: 2px; }
+  100%    { background: var(--rule);   height: 1px; }
+}
+
+/* The global reduced-motion block collapses animations to .01ms, and `both`
+   holds the END state -- so the arrival would land completely unmarked. Drop the
+   animation here and just leave the tab inked. */
+@media (prefers-reduced-motion: reduce) {
+  .term:target > h2,
+  .term:target > h2::after { animation: none; }
+  .term:target > h2        { color: var(--accent); }
+  .term:target > h2::after { background: var(--accent); }
+}
+
 .grid {
   display: grid; gap: 1.5rem;
   grid-template-columns: repeat(auto-fill, minmax(17rem, 1fr));
