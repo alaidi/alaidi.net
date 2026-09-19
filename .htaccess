@@ -41,6 +41,11 @@ RedirectMatch 404 ^/deploy\.sh$
   ExpiresByType image/x-icon              "access plus 1 year"
   ExpiresByType image/vnd.microsoft.icon  "access plus 1 year"
 
+  # i18n.js is requested as i18n.js?v=<sha1>, same deal as style.css: the hash is
+  # the cache key, so bump it in all 16 pages whenever you edit the file.
+  ExpiresByType application/javascript    "access plus 1 year"
+  ExpiresByType text/javascript           "access plus 1 year"
+
   # search.json is read by the search box on every page load.
   ExpiresByType application/json          "access plus 1 day"
 

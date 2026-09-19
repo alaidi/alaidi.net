@@ -197,9 +197,13 @@ img { max-width: 100%; height: auto; }
 .brand:hover .brand-name::after,
 .brand:focus-visible .brand-name::after { transform: scaleX(1); }
 
-.site-nav { margin-left: auto; display: flex; align-items: center; gap: .125rem; }
+.site-nav { margin-inline-start: auto; display: flex; align-items: center; gap: .125rem; }
 .site-nav a {
   position: relative;
+  /* "About me" is two words and must stay on one line: the header is a single
+     flex row, so a wrapped label grows its height and knocks the row out of
+     alignment. It has no slack left now that the AR/EN button shares the row. */
+  white-space: nowrap;
   padding: .5rem .75rem;
   color: var(--muted);
   font-size: .9375rem; font-weight: 500;
@@ -367,7 +371,7 @@ main { flex: 1; padding-block: clamp(2rem, 6vw, 3.5rem) 4rem; }
   flex: 1; min-width: 0; padding: 0;
 }
 :root[data-view="table"] .card h3 { font-size: 1rem; font-weight: 500; }
-:root[data-view="table"] .count { margin: 0; flex-shrink: 0; text-align: right; }
+:root[data-view="table"] .count { margin: 0; flex-shrink: 0; text-align: end; }
 
 /* ---------- article ---------- */
 .prose {
@@ -394,15 +398,16 @@ main { flex: 1; padding-block: clamp(2rem, 6vw, 3.5rem) 4rem; }
 }
 .prose h3 { margin: 2rem 0 .625rem; font-size: 1.0625rem; font-weight: 600; }
 .prose p { margin: 0 0 1rem; }
-.prose ul, .prose ol { margin: 0 0 1rem; padding-left: 1.25rem; }
+.prose ul, .prose ol { margin: 0 0 1rem; padding-inline-start: 1.25rem; }
 .prose li { margin-bottom: .375rem; }
 .prose li::marker { color: var(--rule-strong); }
 
 /* a textbook is a citation, so it is set like one */
 .prose blockquote {
   margin: 0 0 .75rem;
-  padding: .75rem 0 .75rem 1.125rem;
-  border-left: 1px solid var(--rule-strong);
+  padding-block: .75rem;
+  padding-inline: 1.125rem 0;
+  border-inline-start: 1px solid var(--rule-strong);
   color: var(--muted);
   font-family: var(--serif);
   font-size: 1.0625rem; line-height: 1.5;
@@ -437,7 +442,7 @@ main { flex: 1; padding-block: clamp(2rem, 6vw, 3.5rem) 4rem; }
   background: var(--paper);
   border-bottom: 1px solid var(--rule-strong);
   color: var(--muted);
-  text-align: left;
+  text-align: start;
   font-size: .75rem; font-weight: 600;
   letter-spacing: .07em; text-transform: uppercase;
   white-space: nowrap;
@@ -463,8 +468,10 @@ main { flex: 1; padding-block: clamp(2rem, 6vw, 3.5rem) 4rem; }
 /* one drawn glyph, defined once, tinted by currentColor via mask */
 .dl {
   display: inline-flex; align-items: center; gap: .375rem;
-  margin: .125rem .25rem .125rem 0;
-  padding: .1875rem .5rem .1875rem .4375rem;
+  margin-block: .125rem;
+  margin-inline: 0 .25rem;
+  padding-block: .1875rem;
+  padding-inline: .4375rem .5rem;
   border: 1px solid color-mix(in srgb, var(--mark) 55%, transparent);
   border-radius: 6px;
   background: color-mix(in srgb, var(--mark) 15%, transparent);
@@ -526,13 +533,13 @@ main { flex: 1; padding-block: clamp(2rem, 6vw, 3.5rem) 4rem; }
 .pub .authors { color: var(--ink); font-weight: 600; }
 
 /* career: a ruled timeline, the dot sitting on the rule */
-.timeline { margin: 0; padding: 0 0 0 1.5rem; list-style: none; border-left: 1px solid var(--rule); }
+.timeline { margin: 0; padding-inline-start: 1.5rem; list-style: none; border-inline-start: 1px solid var(--rule); }
 .timeline li { position: relative; padding: 0 0 2rem 0; }
 .timeline li:last-child { padding-bottom: 0; }
 .timeline li::before {
   content: "";
-  position: absolute; left: -1.5rem; top: .45rem;
-  width: 9px; height: 9px; margin-left: -5px;
+  position: absolute; inset-inline-start: -1.5rem; top: .45rem;
+  width: 9px; height: 9px; margin-inline-start: -5px;
   border-radius: 50%;
   background: var(--rule-strong);
   outline: 3px solid var(--surface);
@@ -554,13 +561,15 @@ main { flex: 1; padding-block: clamp(2rem, 6vw, 3.5rem) 4rem; }
 .timeline p { margin: 0; color: var(--muted); font-size: .875rem; }
 
 /* ---------- theme toggle ---------- */
-.theme-toggle {
-  margin-left: .25rem; padding: .5rem;
+.theme-toggle,
+.lang-toggle {
+  margin-inline-start: .25rem; padding: .5rem;
   display: inline-flex; border: 0; border-radius: 7px;
   background: none; color: var(--muted); cursor: pointer;
   transition: color .15s var(--ease), background-color .15s var(--ease);
 }
-.theme-toggle:hover { color: var(--ink); background: var(--accent-soft); }
+.theme-toggle:hover,
+.lang-toggle:hover { color: var(--ink); background: var(--accent-soft); }
 .theme-toggle svg { width: 1.125rem; height: 1.125rem; display: block; }
 .theme-toggle .sun { display: none; }
 @media (prefers-color-scheme: dark) {
@@ -587,16 +596,23 @@ main { flex: 1; padding-block: clamp(2rem, 6vw, 3.5rem) 4rem; }
 
 /* ---------- responsive ---------- */
 @media (max-width: 40rem) {
+  /* four items in one row on a 360px phone: buy the width back from the padding
+     rather than letting anything wrap or scroll sideways */
+  .site-nav a { padding-inline: .375rem; }
+  .theme-toggle,
+  .lang-toggle { margin-inline-start: 0; }
+  .lang-toggle { min-width: 1.875rem; padding-inline: .25rem; }
+
   .page-head { display: block; }
   .view-switch { margin-top: 1.25rem; width: fit-content; }
   .grid { grid-template-columns: 1fr; gap: 1.125rem; }
   .bio img { width: 100%; max-width: 15rem; }
   .prose blockquote { font-size: 1rem; }
   /* 26px pills are fine for a mouse and wrong for a thumb */
-  .dl { padding: .5rem .75rem .5rem .625rem; margin-block: .1875rem; font-size: .875rem; }
+  .dl { padding-block: .5rem; padding-inline: .625rem .75rem; margin-block: .1875rem; font-size: .875rem; }
   .prose td { padding: .875rem; }
   :root[data-view="table"] .card-body { display: block; }
-  :root[data-view="table"] .count { text-align: left; margin-top: .125rem; }
+  :root[data-view="table"] .count { text-align: start; margin-top: .125rem; }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -615,7 +631,7 @@ main { flex: 1; padding-block: clamp(2rem, 6vw, 3.5rem) 4rem; }
 
 /* ---------- skip link ---------- */
 .skip {
-  position: absolute; left: .5rem; top: -4rem; z-index: 30;
+  position: absolute; inset-inline-start: .5rem; top: -4rem; z-index: 30;
   padding: .625rem 1rem; border-radius: 8px;
   background: var(--accent); color: var(--surface);
   font-size: .875rem; font-weight: 600;
@@ -638,14 +654,15 @@ main { flex: 1; padding-block: clamp(2rem, 6vw, 3.5rem) 4rem; }
 /* ---------- search ---------- */
 .search { position: relative; margin-bottom: 2.5rem; }
 .search svg {
-  position: absolute; left: .875rem; top: 50%; translate: 0 -50%;
+  position: absolute; inset-inline-start: .875rem; top: 50%; translate: 0 -50%;
   width: 1.125rem; height: 1.125rem;
   fill: none; stroke: var(--muted); stroke-width: 1.8; stroke-linecap: round;
   pointer-events: none;
 }
 .search input {
   width: 100%;
-  padding: .8125rem 1rem .8125rem 2.75rem;
+  padding-block: .8125rem;
+  padding-inline: 2.75rem 1rem;
   background: var(--surface);
   border: 1px solid var(--rule);
   border-radius: 10px;
@@ -725,11 +742,68 @@ main { flex: 1; padding-block: clamp(2rem, 6vw, 3.5rem) 4rem; }
 }
 .card figure.blank::after {
   content: ""; display: block; height: 100%;
-  border-left: 1px solid color-mix(in srgb, var(--accent) 35%, transparent);
-  margin-left: 2rem;
+  border-inline-start: 1px solid color-mix(in srgb, var(--accent) 35%, transparent);
+  margin-inline-start: 2rem;
 }
 :root[data-view="table"] .card figure.blank {
   width: 3.25rem; aspect-ratio: 3 / 2;
   background-size: auto, auto 8px, auto;
 }
-:root[data-view="table"] .card figure.blank::after { margin-left: .6rem; }
+:root[data-view="table"] .card figure.blank::after { margin-inline-start: .6rem; }
+
+/* ---------- Arabic ---------- */
+/* Three pieces make the site bilingual and none of them duplicates a page:
+   - the inline <head> script sets lang/dir from localStorage before first paint,
+     the same trick and the same try/catch as the theme;
+   - i18n.js swaps the shared chrome from a text-keyed dictionary;
+   - the two prose pages carry both languages as .en / .ar siblings, because
+     paragraphs with links and <code> in them do not survive a text swap.
+   The .en/.ar pair is CSS-only on purpose: it is correct on the very first paint
+   and it keeps working if i18n.js never loads. */
+.ar { display: none; }
+:root[lang="ar"] .ar { display: revert; }
+:root[lang="ar"] .en { display: none; }
+
+/* Syllabus tables and textbook citations stay left-to-right in Arabic: their
+   content is deliberately still English, so mirroring the column order or
+   throwing the citation rule to the right side only makes them harder to read.
+   The <th> labels inside are Arabic and bidi places them correctly. */
+:root[lang="ar"] .prose table,
+:root[lang="ar"] .prose blockquote { direction: ltr; }
+:root[lang="ar"] .prose blockquote { text-align: start; }
+/* ...but a citation also keeps a 68ch reading measure, and a box narrower than
+   its container goes flush to the INLINE START -- which on an RTL page is the
+   right. That left the oxblood rule stranded mid-card with dead space beside it,
+   lined up with nothing. Push the island to the left instead, so its rule lands
+   on the card's content edge, in line with the syllabus table underneath.
+   Physical margin on purpose: the box is direction:ltr, so margin-inline-* here
+   would resolve against the island and push it the wrong way. */
+:root[lang="ar"] .prose blockquote { margin-right: auto; }
+
+/* Arabic has no matching webfont here (see CLAUDE.md) -- it falls back to the
+   system face, which runs smaller than Plex at the same size and sits tight. */
+:root[lang="ar"] body { font-size: 1.0625rem; line-height: 1.75; }
+
+/* Two runs of Latin text that bidi gets wrong inside an Arabic paragraph, and
+   both are load-bearing rather than cosmetic:
+   - a career date range reorders to read END - START, i.e. it states the wrong
+     dates. direction:ltr fixes the order, text-align:end keeps the block itself
+     ranged right with the rest of the timeline.
+   - inline <code> is the opt-out instruction on privacy-policy/. Left to bidi,
+     localStorage.setItem("disable-rybbit", "1") comes out with its brackets and
+     quotes transposed, and a visitor who retypes what they see gets an error. */
+:root[lang="ar"] .when { direction: ltr; text-align: end; }
+:root[lang="ar"] code { unicode-bidi: isolate; direction: ltr; }
+
+/* Pre-dates the Arabic work and affects both languages: the opt-out command is
+   one unbreakable token wider than a 320px phone, so the whole page scrolled
+   sideways. Breaking mid-token is ugly and correct -- it is the only way the
+   full command is readable at that width. */
+.prose code { overflow-wrap: anywhere; }
+
+/* the AR/EN button borrows the theme toggle's box; only the glyph differs */
+.lang-toggle {
+  font-family: var(--sans);
+  font-size: .875rem; font-weight: 600; line-height: 1.125rem;
+  min-width: 2.125rem; justify-content: center;
+}

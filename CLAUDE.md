@@ -110,6 +110,61 @@ deferred. It sets no cookies but does keep a random `rybbit-visitor-id` in
 exactly what is collected and how to opt out (`localStorage["disable-rybbit"]`).
 The policy is hand-written, not the WordPress boilerplate it replaced.
 
+**The site is bilingual through one button, not two copies.** There is no `/ar/`
+mirror and there must not be: the whole point is that 16 files stay 16 files.
+Three pieces do the work, and each is the lazy answer for a different half of the
+page:
+
+- the inline `<head>` script reads `localStorage["lang"]` and sets `lang`/`dir`
+  on `<html>` **before first paint** — same trick, same `try/catch`, same reason
+  as the theme. Without it the page paints LTR and then jumps.
+- `i18n.js` swaps the shared chrome from a **text-keyed dictionary**: nav, footer,
+  breadcrumbs, table headers, `file`/`files`, the syllabus headings. Those strings
+  are byte-identical in all 16 pages, so keying on the English text means no
+  per-page markup to keep in sync. The catch is that one English string gets
+  exactly one Arabic rendering everywhere it appears.
+- the two prose pages carry **both languages as `.en` / `.ar` siblings**, because
+  paragraphs with `<a>` and `<code>` inside them do not survive a text swap. That
+  pair is CSS-only (`:root[lang="ar"] .en { display: none }`), so it is correct on
+  the first paint and keeps working if `i18n.js` never loads.
+
+Adding a shared label means one dictionary entry. Adding a paragraph to about-me
+or privacy-policy means an `.en` block and an `.ar` block. Do not mix the two.
+
+**`i18n.js` is fingerprinted exactly like `style.css`,** requested as
+`i18n.js?v=<sha1>` and now cached for a year by `.htaccess`. **Edit it without
+bumping `?v=` in all 16 pages and returning visitors keep the old dictionary for
+up to a year.** The hash is `shasum i18n.js | cut -c1-8`. Nothing else depends on
+the file: if it fails to load the page is simply English and the button is inert.
+
+**Course titles and syllabus topics stay English in Arabic mode, on purpose.**
+That is the vocabulary the lecture slides and the exams use — a student looking
+for "Ant Colony Optimization" should find that string, not a translation of it.
+For the same reason `:root[lang="ar"]` forces `.prose table` and
+`.prose blockquote` back to `direction: ltr`: their content is still English, so
+mirroring the column order or throwing the citation rule to the right side only
+makes them harder to read. The `<th>` labels inside are Arabic and bidi places
+them correctly.
+
+**Two Latin runs need an explicit direction inside Arabic prose, and both are
+load-bearing.** A career date range in `.when` reorders to read END – START —
+i.e. it states the wrong dates — so it is pinned `direction: ltr`. Inline `<code>`
+is pinned `unicode-bidi: isolate`, and the two long opt-out commands on
+`privacy-policy/` sit in their own `<p dir="ltr">` rather than inline, because a
+command that wraps mid-run inside RTL text comes apart with its brackets
+transposed, and that is the one snippet on the site a visitor is meant to retype.
+
+**The layout is RTL-ready through logical properties, not an `[dir="rtl"]`
+override block.** `margin-inline-start`, `padding-inline`, `border-inline-start`,
+`inset-inline-start`, `text-align: start/end` — there is no second set of mirrored
+rules to drift out of step. Reintroducing a physical `margin-left` or
+`text-align: right` silently breaks Arabic only, which is the kind of thing nobody
+notices for months. The exceptions are the symmetric `left: 0; right: 0` pairs on
+the two underline pseudo-elements, which need no mirroring.
+
+**The site now stores three preferences, not two,** and `privacy-policy/` says so
+in both languages. A fourth one means editing that page twice.
+
 **A third face exists, and it may only ever set the word "alaidi".** The header
 wordmark is Young Serif (`--display`), chosen for its single-storey `a`, which
 lands twice in the name. `fonts/young-serif-alaidi.woff2` is 1.2 KB because it was
