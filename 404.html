@@ -31,7 +31,97 @@
 </header>
 <main id="content">
   <div class="wrap">
-<h1 class="page-title">Page not found</h1><p class="page-sub">That address does not exist on this site. It may have moved when the site was rebuilt.</p><p style="margin-top:2rem"><a class="btn" href="/">Go to the course list</a></p>
+<h1 class="page-title">Page not found</h1><p class="page-sub">That address does not exist on this site. It may have moved when the site was rebuilt.</p>
+<div class="search">
+  <svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="9" cy="9" r="6"/><path d="m13.5 13.5 4 4"/></svg>
+  <input type="search" id="q" autocomplete="off" spellcheck="false"
+         placeholder="Search lectures, topics and courses"
+         aria-label="Search lectures, topics and courses" aria-controls="results">
+</div>
+<div id="results" class="results" role="region" aria-live="polite" hidden></div>
+<p style="margin-top:2rem"><a class="btn" href="/">Go to the course list</a></p>
+<script>
+/* Search seeded from the address that missed. Matching is word-AND over names,
+   hrefs and topics, not the substring match index.html uses: a dead WordPress
+   URL like /download/rijndael-inspector-aes/ has to reach
+   download/files/rijndael-inspector-aes-Rijndael-Inspector-v1.1.zip. */
+(function () {
+  var input = document.getElementById("q"),
+      results = document.getElementById("results"),
+      data = null, timer;
+
+  function t(s) { return window.t ? window.t(s) : s; }
+  function esc(s) {
+    return s.replace(/[&<>"]/g, function (c) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c];
+    });
+  }
+  function hit(href, main, sub, meta) {
+    return '<a class="hit" href="/' + href + '"><span class="hit-main">' + esc(main) +
+           '</span><span class="hit-sub">' + esc(sub) + '</span>' +
+           (meta ? '<span class="hit-meta">' + esc(meta) + '</span>' : '') + '</a>';
+  }
+
+  function render(q, words) {
+    var rows = [], seen = 0;
+    function has(hay) {
+      hay = hay.toLowerCase();
+      return words.every(function (w) { return hay.indexOf(w) > -1; });
+    }
+    data.forEach(function (c) {
+      var where = c.t + " \u00b7 " + c.s;
+      if (has(c.t + " " + c.s + " " + c.p))
+        rows.push(hit(c.p, c.t, c.s + " \u00b7 " + c.f.length + " " +
+                      t(c.f.length === 1 ? "file" : "files")));
+      c.f.forEach(function (f) {
+        if (has(f.n + " " + f.h)) rows.push(hit(f.h, f.n, where, f.m));
+      });
+      c.k.forEach(function (k) {
+        if (has(k) && seen++ < 12)
+          rows.push(hit(c.p, k.length > 110 ? k.slice(0, 110) + "\u2026" : k, where));
+      });
+    });
+    results.innerHTML = rows.length
+      ? '<p class="results-count">' + rows.length + " " +
+        t(rows.length === 1 ? "result" : "results") + " " + t("for") +
+        ' &ldquo;' + esc(q) + '&rdquo;</p>' + rows.join("")
+      : '<p class="results-count">' + t("Nothing matches") + ' &ldquo;' + esc(q) +
+        '&rdquo;. ' + t("Try a course name, a lecture title, or a topic.") + '</p>';
+  }
+
+  function words(q) {
+    return q.toLowerCase().split(/[^0-9a-z\u0600-\u06ff]+/)
+            .filter(function (w) { return w.length > 1; });
+  }
+
+  function run() {
+    var q = input.value.trim(), w = words(q);
+    if (!w.length) { results.hidden = true; return; }
+    if (!data) {
+      fetch("/search.json").then(function (r) { return r.json(); })
+        .then(function (j) { data = j; run(); })
+        .catch(function () {
+          results.hidden = false;
+          results.innerHTML = '<p class="results-count">' +
+            t("Search is unavailable right now.") + '</p>';
+        });
+      return;
+    }
+    results.hidden = false;
+    render(q, w);
+  }
+
+  input.addEventListener("input", function () { clearTimeout(timer); timer = setTimeout(run, 120); });
+  input.addEventListener("keydown", function (e) {
+    if (e.key === "Escape") { input.value = ""; run(); input.blur(); }
+  });
+
+  /* the missed path, last segment, extension dropped: the slug is the query */
+  var slug = decodeURIComponent(location.pathname).replace(/\/+$/, "")
+               .split("/").pop().replace(/\.[a-z0-9]{2,5}$/i, "");
+  if (words(slug).length) { input.value = slug.replace(/[-_+%]+/g, " ").trim(); run(); }
+})();
+</script>
   </div>
 </main>
 <footer class="site-footer">
