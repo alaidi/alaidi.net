@@ -551,7 +551,8 @@ main { flex: 1; padding-block: clamp(2rem, 6vw, 3.5rem) 4rem; }
   padding: 1rem 0;
   border-bottom: 1px solid var(--rule);
 }
-.pub:last-of-type { border-bottom: 0; }
+/* the last entry before a heading or note closes its own list -- no rule under it */
+.pub:not(:has(+ .pub)) { border-bottom: 0; }
 .pub h3 {
   margin: 0 0 .375rem;
   font-family: var(--serif);
@@ -560,6 +561,15 @@ main { flex: 1; padding-block: clamp(2rem, 6vw, 3.5rem) 4rem; }
 .pub p { margin: 0; color: var(--muted); font-size: .875rem; }
 .pub, .timeline { max-width: 68ch; }
 .pub .authors { color: var(--ink); font-weight: 600; }
+.pub .venue { margin-top: .125rem; }
+.pub .year { font-variant-numeric: tabular-nums; }
+.prose .pub-note { margin: .25rem 0 0; color: var(--muted); font-size: .875rem; }
+
+/* projects and editorial are short lists: side by side once both columns fit */
+.about-pair {
+  display: grid; gap: 0 3rem;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 20rem), 1fr));
+}
 
 /* career: a ruled timeline, the dot sitting on the rule */
 .timeline { margin: 0; padding-inline-start: 1.5rem; list-style: none; border-inline-start: 1px solid var(--rule); }
