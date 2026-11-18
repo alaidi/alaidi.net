@@ -26,6 +26,7 @@
     "Toggle dark mode": "تبديل الوضع الداكن",
     "Breadcrumb": "مسار التصفح",
     "Privacy Policy": "سياسة الخصوصية",
+    "Source on GitHub": "المصدر على GitHub",
     "Abdul Hadi Web Site": "موقع عبد الهادي",
     "— Abdul Hadi Web Site": "— موقع عبد الهادي",
     "© 2026 alaidi. All Rights Reserved. ·": "© 2026 alaidi. جميع الحقوق محفوظة. ·",
