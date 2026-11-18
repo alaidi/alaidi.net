@@ -235,6 +235,7 @@ main { flex: 1; padding-block: clamp(2rem, 6vw, 3.5rem) 4rem; }
   color: var(--muted);
   font-size: 1rem;
 }
+.page-sub + .prose { margin-top: 2rem; }
 
 /* home: title block sits left, switch to its right — no centred-everything default */
 .page-head {
@@ -415,7 +416,8 @@ main { flex: 1; padding-block: clamp(2rem, 6vw, 3.5rem) 4rem; }
 .prose.wide > p,
 .prose.wide > ul,
 .prose.wide > ol,
-.prose.wide > blockquote { max-width: 68ch; }
+.prose.wide > blockquote,
+.prose.wide > .books > * { max-width: 68ch; }
 .prose > :first-child { margin-top: 0; }
 .prose > :last-child { margin-bottom: 0; }
 
@@ -442,6 +444,27 @@ main { flex: 1; padding-block: clamp(2rem, 6vw, 3.5rem) 4rem; }
   font-size: 1.0625rem; line-height: 1.5;
 }
 .prose blockquote p { margin: 0; }
+
+/* textbooks fold away, closed by default: the syllabus is what a student came for */
+.books > summary {
+  display: flex; align-items: center; gap: .625rem;
+  width: fit-content;
+  cursor: pointer;
+  list-style: none;
+}
+.books > summary::-webkit-details-marker { display: none; }
+.books > summary h2 { margin: 0; }
+.books > summary::after {
+  content: "";
+  width: .5rem; height: .5rem;
+  border-block-end: 2px solid currentColor; border-inline-end: 2px solid currentColor;
+  color: var(--muted);
+  transform: translateY(-.15rem) rotate(45deg);
+  transition: transform .2s var(--ease), color .15s var(--ease);
+}
+.books > summary:hover::after { color: var(--accent); }
+.books[open] > summary { margin-bottom: 1rem; }
+.books[open] > summary::after { transform: translateY(.1rem) rotate(225deg); }
 .prose hr { border: 0; border-top: 1px solid var(--rule); margin: 2.5rem 0; }
 
 /* ---------- syllabus tables ---------- */
@@ -491,6 +514,12 @@ main { flex: 1; padding-block: clamp(2rem, 6vw, 3.5rem) 4rem; }
   font-weight: 600; font-size: .875rem;
 }
 .prose td:nth-child(2) { white-space: nowrap; color: var(--muted); font-size: .875rem; }
+/* the week we are in: an oxblood binder tab, never amber (amber means download).
+   inset shadow is physical-left on purpose: tables stay LTR even in Arabic */
+.prose tbody tr[aria-current] { background: var(--accent-soft); }
+.prose tbody tr[aria-current] td:first-child,
+.prose tbody tr[aria-current] td:nth-child(2) { color: var(--accent); }
+.prose tbody tr[aria-current] td:first-child { box-shadow: inset 3px 0 var(--accent); }
 .prose strong { font-weight: 600; }
 
 /* ---------- downloads ---------- */
@@ -541,6 +570,16 @@ main { flex: 1; padding-block: clamp(2rem, 6vw, 3.5rem) 4rem; }
   font-family: var(--serif);
   font-size: 1.875rem; font-weight: 700; line-height: 1.15; letter-spacing: -.02em;
 }
+/* researcher profiles: real 44px tap targets, oxblood not amber (nothing to download) */
+.profiles { display: flex; flex-wrap: wrap; gap: .5rem; margin: 1.5rem 0 0; }
+.profiles a {
+  display: inline-flex; align-items: center;
+  min-height: 2.75rem; padding-inline: 1rem;
+  border: 1px solid var(--rule-strong); border-radius: 999px;
+  color: var(--ink); font-size: .875rem; font-weight: 500;
+  transition: background-color .15s var(--ease), border-color .15s var(--ease), color .15s var(--ease);
+}
+.profiles a:hover { background: var(--accent-soft); border-color: var(--accent); color: var(--accent); text-decoration: none; }
 .eyebrow {
   color: var(--accent);
   font-size: .75rem; font-weight: 600;
