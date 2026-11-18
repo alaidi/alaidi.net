@@ -51,6 +51,10 @@ files: the header and footer are copied into every page on purpose.
 
 ## Use
 
-© Abdul Hadi M. Alaidi. You are free to download, copy and republish this
-material for educational purposes. A credit and a link back to
-https://alaidi.net are appreciated.
+© Abdul Hadi M. Alaidi. The pages and the lecture material I wrote are free to
+download, copy and republish for educational purposes. A credit and a link back
+to https://alaidi.net are appreciated.
+
+Textbooks and publisher slides in `download/` belong to their authors and
+publishers. They are here for my students and are not covered by this
+permission.
